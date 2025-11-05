@@ -31,7 +31,9 @@ class PaymentViewSet(
 
     @action(detail=False, methods=["get"], url_path="success")
     def payment_success(self, request):
-        """Handle successful payment."""
+        """Handle successful payment and send Telegram notification."""
+        from notifications.telegram_helper import notify_successful_payment
+
         session_id = request.query_params.get("session_id")
 
         if not session_id:
@@ -46,6 +48,10 @@ class PaymentViewSet(
             if check_session_status(session_id):
                 payment.status = Payment.STATUS_PAID
                 payment.save()
+
+                # Send Telegram notification about successful payment
+                notify_successful_payment(payment)
+
                 return Response(
                     {"message": "Payment successful!"},
                     status=status.HTTP_200_OK,

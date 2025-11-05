@@ -54,8 +54,9 @@ class BorrowingViewSet(
     def perform_create(self, serializer):
         """
         Create borrowing, attach user, decrease book inventory,
-        create Stripe payment session.
+        create Stripe payment session, send Telegram notification.
         """
+        from notifications.telegram_helper import notify_new_borrowing
         from payments.stripe_helper import create_stripe_session
 
         book = serializer.validated_data["book"]
@@ -66,6 +67,9 @@ class BorrowingViewSet(
 
         # Create Stripe payment session automatically
         create_stripe_session(borrowing, self.request)
+
+        # Send Telegram notification about new borrowing
+        notify_new_borrowing(borrowing)
 
     @action(detail=True, methods=["post"], url_path="return")
     def return_book(self, request, pk=None):
