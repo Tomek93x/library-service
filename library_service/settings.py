@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "borrowings.apps.BorrowingsConfig",
     "payments.apps.PaymentsConfig",
+    "notifications",
 ]
 
 MIDDLEWARE = [

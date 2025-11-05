@@ -30,6 +30,6 @@ def schedule_overdue_check():
     """Schedule daily task to check overdue borrowings."""
     schedule(
         "notifications.tasks.check_overdue_borrowings",
-        schedule_type="daily",
+        schedule_type="D",  # D = Daily
         repeats=-1,  # Repeat indefinitely
     )
