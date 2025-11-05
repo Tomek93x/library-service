@@ -1,104 +1,90 @@
-# Library Service
+# Library Service API
 
-A full-stack Django REST API for managing a library: book inventory, borrowings/returns, users, payments (Stripe), and Telegram notifications.  
-Supports JWT authentication, admin/staff roles, daily overdue checks, and Docker deployment.
+A full-stack Django REST API for managing a library system: book inventory, borrowings, users, payments (Stripe), and Telegram notifications.
 
----
+## 📋 Project Description
 
-## Features
+This project modernizes a traditional library by implementing an online management system for book borrowings. The system optimizes library administrators' work and makes the service more user-friendly.
 
-- **Books CRUD**: List/create/update/delete books (admin), search books (all users)
-- **Users**: Register, JWT login, manage profile, custom user model (email login)
-- **Borrowings**: Borrow, filter/search returns, auto-create Stripe payment
-- **Returns**: Update inventory, create fine in case of late return
-- **Payments**: Stripe integration for all operations; webhook support
-- **Notifications**: Telegram bot integration for instant alerts
-- **Overdue Checks**: Daily scheduled check and notification
-- **Admin**: Full browsing in `/admin/`
+**Problem solved:**
+- Manual paper-based tracking of books, borrowings, and payments
+- No real-time inventory management
+- Cash-only payments
+- No automated overdue notifications
 
----
-
-## Quickstart
-
-1. **Clone & Install**
-    ```
-    git clone <repo-url>
-    cd library-service
-    python -m venv venv
-    source venv/bin/activate  # Windows: venv\Scripts\activate
-    pip install -r requirements.txt
-    ```
-
-2. **.env Configuration**
-    ```
-    SECRET_KEY=your-super-secret
-    DEBUG=True
-    ALLOWED_HOSTS=127.0.0.1,localhost
-    STRIPE_SECRET_KEY=sk_test_...
-    STRIPE_PUBLISHABLE_KEY=pk_test_...
-    TELEGRAM_BOT_TOKEN=123456:ABC-DEF...
-    TELEGRAM_CHAT_ID=your-chat-id
-    REDIS_HOST=localhost
-    REDIS_PORT=6379
-    ```
-
-3. **Run Database Migrations**
-    ```
-    python manage.py migrate
-    python manage.py createsuperuser
-    ```
-
-4. **Start Development Server**
-    ```
-    python manage.py runserver
-    ```
-
-5. **Run Django-Q cluster for async/scheduled tasks**
-    ```
-    python manage.py qcluster
-    ```
-
-6. **(Optional) Setup scheduled tasks:**
-    ```
-    python manage.py setup_schedule
-    ```
+**Solution:**
+- Web-based REST API for all library operations
+- Automated Stripe payment processing
+- Real-time Telegram notifications
+- JWT-based authentication
+- Scheduled daily overdue checks
 
 ---
 
-## API Endpoints
+## ✨ Features
 
-- Books:        `/api/books/`
-- Users:        `/api/users/` (`register/`, `token/`, `me/`)
-- Borrowings:   `/api/borrowings/`
-- Payments:     `/api/payments/`
-- Admin:        `/admin/`
-- API Docs:     `/api/docs/`
+### Books Management
+- ✅ Full CRUD operations (admin only)
+- ✅ Public book listing and search
+- ✅ Inventory tracking
+- ✅ Cover type (HARD/SOFT) support
+
+### User Management
+- ✅ Custom user model with email authentication
+- ✅ JWT token-based authentication
+- ✅ User registration and profile management
+- ✅ Admin/staff role permissions
+
+### Borrowing System
+- ✅ Create borrowings with automatic inventory updates
+- ✅ Filter by user and active/returned status
+- ✅ Return functionality with fine calculation
+- ✅ Automatic payment creation on borrowing
+
+### Payment Processing
+- ✅ Stripe payment integration
+- ✅ Automatic payment session creation
+- ✅ Payment success/cancel webhooks
+- ✅ Fine calculation for overdue returns
+- ✅ Payment status tracking (PENDING/PAID)
+
+### Notifications
+- ✅ Telegram bot integration
+- ✅ New borrowing notifications
+- ✅ Daily overdue check notifications
+- ✅ Successful payment notifications
+
+### Background Tasks
+- ✅ Django-Q integration for async tasks
+- ✅ Scheduled daily overdue checks
+- ✅ Redis-backed task queue
 
 ---
 
-## Tech Stack
+## 🏗️ Architecture
 
-- Python 3.13, Django 4.2, DRF
-- PostgreSQL or SQLite (default)
-- Stripe Payments (sandbox)
-- Docker, Redis (for queue/scheduling)
-- Telegram Bot API
+The system follows a microservices-inspired architecture with the following components:
 
----
+- **Books Service**: Manage book catalog and inventory
+- **Users Service**: Handle authentication and user profiles
+- **Borrowings Service**: Manage borrowing operations
+- **Payments Service**: Process payments via Stripe
+- **Notifications Service**: Send Telegram notifications
+- **Background Tasks**: Django-Q cluster for scheduled tasks
 
-## Docker (Optional)
-
-1. **Start all services in Docker:**
-    ```
-    docker-compose up --build
-    ```
-2. Access:  
-    - API:   `http://localhost:8000/`
-    - Admin: `http://localhost:8000/admin/`
+All services communicate via REST API endpoints documented in Swagger.
 
 ---
 
-## Testing
+## 🚀 Quick Start
 
-Run tests:
+### Prerequisites
 
+- Python 3.13+
+- PostgreSQL 15+ (or SQLite for development)
+- Redis 7+
+- Docker & Docker Compose (optional)
+
+### Local Development Setup
+
+1. **Clone the repository**
