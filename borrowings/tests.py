@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from decimal import Decimal
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
@@ -27,11 +28,11 @@ class BorrowingTests(TestCase):
             author="Test Author",
             cover="SOFT",
             inventory=5,
-            daily_fee="2.00",
+            daily_fee=Decimal("2.00"),
         )
 
-    @patch("borrowings.views.create_stripe_session")
-    @patch("borrowings.views.notify_new_borrowing")
+    @patch("payments.stripe_helper.create_stripe_session")
+    @patch("notifications.telegram_helper.notify_new_borrowing")
     def test_create_borrowing(self, mock_notify, mock_stripe):
         """Test creating a borrowing."""
         self.client.force_authenticate(user=self.user)
@@ -91,7 +92,7 @@ class BorrowingTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 2)
 
-    @patch("borrowings.views.create_fine_payment")
+    @patch("payments.stripe_helper.create_fine_payment")
     def test_return_book(self, mock_fine):
         """Test returning a book."""
         borrowing = Borrowing.objects.create(

@@ -1,4 +1,3 @@
-from datetime import datetime
 from decimal import Decimal
 
 import stripe
@@ -6,6 +5,7 @@ from django.conf import settings
 from django.urls import reverse
 
 from payments.models import Payment
+
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -17,6 +17,8 @@ def create_stripe_session(borrowing, request):
     days = (borrowing.expected_return_date - borrowing.borrow_date).days
     if days < 1:
         days = 1
+
+    # Convert days to Decimal and multiply by daily_fee
     total_price = Decimal(days) * borrowing.book.daily_fee
 
     # Convert to cents for Stripe
@@ -68,15 +70,17 @@ def create_fine_payment(borrowing, request):
     """Create fine payment for overdue borrowing."""
 
     # Calculate overdue days
-    overdue_days = (borrowing.actual_return_date - borrowing.expected_return_date).days
+    overdue_days = (
+        borrowing.actual_return_date - borrowing.expected_return_date
+    ).days
     if overdue_days <= 0:
         return None
 
-    # Calculate fine amount
+    # Calculate fine amount - convert all to Decimal
     fine_amount = (
-            Decimal(overdue_days)
-            * borrowing.book.daily_fee
-            * settings.FINE_MULTIPLIER
+        Decimal(overdue_days)
+        * borrowing.book.daily_fee
+        * Decimal(settings.FINE_MULTIPLIER)
     )
 
     # Convert to cents for Stripe
